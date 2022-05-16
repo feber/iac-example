@@ -12,11 +12,24 @@ terraform {
 provider "openstack" {
 }
 
-### cluster wide keypair ###
+### cluster wide ###
 
 resource "openstack_compute_keypair_v2" "cluster" {
   name       = "cluster"
   public_key = chomp(file(var.public_key_path))
+}
+
+resource "openstack_networking_secgroup_v2" "cluster" {
+  name                 = "cluster"
+  description          = "Cluster-wide communication for internal nodes"
+  delete_default_rules = true
+}
+
+resource "openstack_networking_secgroup_rule_v2" "cluster" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  remote_group_id   = openstack_networking_secgroup_v2.cluster.id
+  security_group_id = openstack_networking_secgroup_v2.cluster.id
 }
 
 ### bastion ###
@@ -63,7 +76,10 @@ resource "openstack_compute_instance_v2" "bastion" {
     name = var.network_name
   }
 
-  security_groups = [openstack_networking_secgroup_v2.bastion[0].name]
+  security_groups = [
+    openstack_networking_secgroup_v2.cluster.name,
+    openstack_networking_secgroup_v2.bastion[0].name,
+  ]
 }
 
 ### workers ###
@@ -94,7 +110,10 @@ resource "openstack_compute_instance_v2" "worker" {
     name = var.network_name
   }
 
-  security_groups = [openstack_networking_secgroup_v2.worker[0].name]
+  security_groups = [
+    openstack_networking_secgroup_v2.cluster.name,
+    openstack_networking_secgroup_v2.worker[0].name,
+  ]
 }
 
 ### outputs ###
