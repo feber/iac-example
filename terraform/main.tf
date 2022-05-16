@@ -44,6 +44,14 @@ resource "openstack_networking_secgroup_rule_v2" "bastion" {
   security_group_id = openstack_networking_secgroup_v2.bastion[0].id
 }
 
+resource "openstack_networking_secgroup_rule_v2" "bastion_egress" {
+  count             = length(var.bastion_allowed_egress_ips)
+  direction         = "egress"
+  ethertype         = "IPv4"
+  remote_ip_prefix  = var.bastion_allowed_egress_ips[count.index]
+  security_group_id = openstack_networking_secgroup_v2.bastion[0].id
+}
+
 resource "openstack_compute_instance_v2" "bastion" {
   name        = "bastion-${count.index + 1}"
   count       = var.number_of_bastions
