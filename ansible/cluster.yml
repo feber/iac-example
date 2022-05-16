@@ -1,0 +1,8 @@
+- hosts: bastion
+  become: true
+  tasks:
+    - name: Install fail2ban
+      apt:
+        update_cache: yes
+        name: fail2ban
+        state: latest
