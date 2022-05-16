@@ -9,7 +9,8 @@ tf-up: fmt
 
 ansible-up:
 	@cd ansible && \
-		ANSIBLE_TIMEOUT=120 ansible-playbook cluster.yml -i inventory/hosts.ini --forks 25
+		ansible-galaxy install -r requirements.yml && \
+		ansible-playbook cluster.yml -i inventory/hosts.ini --forks 25
 
 sleep:
 	@echo "wait for 30 seconds so the VMs are all ready"
