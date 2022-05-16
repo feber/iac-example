@@ -5,8 +5,8 @@ fmt:
 
 up: fmt
 	@cd terraform && \
-		terraform apply -var-file=data.tfvars -auto-approve
+		terraform apply -auto-approve
 
 down:
 	@cd terraform && \
-		terraform destroy -var-file=data.tfvars -auto-approve
+		terraform destroy -auto-approve
