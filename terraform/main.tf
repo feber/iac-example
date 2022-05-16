@@ -96,3 +96,21 @@ resource "openstack_compute_instance_v2" "worker" {
 
   security_groups = [openstack_networking_secgroup_v2.worker[0].name]
 }
+
+### outputs ###
+
+resource "local_sensitive_file" "hosts_ini" {
+  filename = "../ansible/inventory/hosts.ini"
+  content  = <<EOT
+[bastion]
+bastion-1 ansible_host=${var.floating_ip_bastion}
+
+[worker]
+%{for host in openstack_compute_instance_v2.worker~}
+${host.name} ansible_host=${host.access_ip_v4}
+%{endfor~}
+
+[worker:vars]
+ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p -p 22 ubuntu@${var.floating_ip_bastion}"'
+  EOT
+}
