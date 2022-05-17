@@ -1,4 +1,5 @@
 - hosts: worker
+  gather_facts: yes
   roles:
     - role: geerlingguy.java
       become: true
