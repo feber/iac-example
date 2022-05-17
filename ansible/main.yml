@@ -1,11 +1,18 @@
 - hosts: worker
   gather_facts: yes
+  become: true
+
+  pre_tasks:
+    - name: Update apt cache if required
+      apt: update_cache=yes cache_valid_time=86400
+
   roles:
     - role: geerlingguy.java
-      become: true
+    - role: geerlingguy.elasticsearch
 
 - hosts: bastion
   become: true
+
   tasks:
     - name: Install fail2ban
       apt:
