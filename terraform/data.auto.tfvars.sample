@@ -1,0 +1,20 @@
+# SSH key to use for access to nodes
+public_key_path  = ""
+private_key_path = ""
+
+# image to use for bastion and worker nodes
+image_name = "Ubuntu-20.04"
+
+# user on the node
+ssh_user = "ubuntu"
+
+# 0|1 bastion nodes
+number_of_bastions  = 1
+flavor_bastion      = "standard.small"
+floating_ip_bastion = "1.2.3.4"
+
+# worker nodes
+number_of_workers = 1
+flavor_worker     = ""
+
+network_name = "project_xyz"
