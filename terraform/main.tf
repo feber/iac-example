@@ -130,9 +130,10 @@ ${host.name} ansible_host=${host.access_ip_v4}
 %{endfor~}
 
 [worker:vars]
-ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p -p 22 ${var.ssh_user}@${var.floating_ip_bastion}"'
+ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="ssh -i ${var.private_key_path} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p -p 22 ${var.ssh_user}@${var.floating_ip_bastion}"'
 
 [all:vars]
 ansible_user=${var.ssh_user}
+ansible_ssh_private_key_file=${var.private_key_path}
   EOT
 }
