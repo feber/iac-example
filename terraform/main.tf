@@ -120,20 +120,24 @@ resource "openstack_compute_instance_v2" "worker" {
 
 resource "local_sensitive_file" "hosts_ini" {
   filename = "../ansible/inventory/hosts.ini"
-  content  = <<EOT
-[bastion]
-bastion-1 ansible_host=${var.floating_ip_bastion}
+  content = templatefile("${path.module}/templates/inventory.tpl", {
+    floating_ip_bastion = var.floating_ip_bastion
+    bastion             = openstack_compute_instance_v2.bastion
+    workers             = openstack_compute_instance_v2.worker
+    number_of_bastions  = var.number_of_bastions
+    ssh_user            = var.ssh_user
+    private_key_path    = var.private_key_path
+  })
+}
 
-[worker]
-%{for host in openstack_compute_instance_v2.worker~}
-${host.name} ansible_host=${host.access_ip_v4}
-%{endfor~}
-
-[worker:vars]
-ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ProxyCommand="ssh -i ${var.private_key_path} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p -p 22 ${var.ssh_user}@${var.floating_ip_bastion}"'
-
-[all:vars]
-ansible_user=${var.ssh_user}
-ansible_ssh_private_key_file=${var.private_key_path}
-  EOT
+resource "local_sensitive_file" "ssh_conf_cfg" {
+  filename = "../ansible/ssh-bastion.cfg"
+  content = templatefile("${path.module}/templates/ssh-bastion.tpl", {
+    floating_ip_bastion = var.floating_ip_bastion
+    bastion             = openstack_compute_instance_v2.bastion
+    workers_name        = join(" ", openstack_compute_instance_v2.worker.*.access_ip_v4)
+    number_of_bastions  = var.number_of_bastions
+    ssh_user            = var.ssh_user
+    private_key_path    = var.private_key_path
+  })
 }
