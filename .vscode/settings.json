@@ -11,5 +11,6 @@
     "search.useIgnoreFiles": false,
     "yaml.schemas": {
         "https://raw.githubusercontent.com/ansible-community/schemas/main/f/ansible.json#/$defs/playbook": "file:///home/feber/Code/testbed/pipeline/ansible/cluster.yml"
-    }
+    },
+    "python.formatting.provider": "black"
 }
