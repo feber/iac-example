@@ -27,10 +27,12 @@ secgroup_rule = networking.SecGroupRule(
 
 network = networking.Network(network_name)
 
-# bastion
-
 
 def bastion():
+    """
+    Responsible for security group, its rules, compute instance and
+    floating IP association for bastion node(s).
+    """
 
     # security group
     bastion_secgroup = networking.SecGroup(
@@ -79,5 +81,42 @@ def bastion():
     )
 
 
+def worker():
+    """
+    Responsible for security group, its rules, compute instance and
+    floating IP association for worker node(s).
+    """
+
+    # security group
+    worker = networking.SecGroup(
+        "worker",
+        name="worker",
+        description="Worker node",
+        delete_default_rules=True,
+    )
+
+    # security group rules
+    networking.SecGroupRule(
+        "worker_secgroup_egress",
+        direction="egress",
+        ethertype="IPv4",
+        remote_ip_prefix="0.0.0.0/0",
+        security_group_id=worker.id,
+    )
+
+    # compute instance
+    for i in range(0, config.require_int("number_of_workers")):
+        compute.Instance(
+            f"worker-{i}",
+            name=f"worker-{i}",
+            image_name=config.require("image_name"),
+            flavor_name=config.require("flavor_worker"),
+            key_pair=cluster_keypair.name,
+            security_groups=[secgroup, worker],
+            networks=[compute.InstanceNetworkArgs(name=network_name)],
+        )
+
+
 if __name__ == "__main__":
     bastion()
+    worker()
