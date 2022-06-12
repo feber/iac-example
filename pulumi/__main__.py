@@ -3,11 +3,9 @@
 from unicodedata import name
 from pulumi_openstack import compute, networking
 
-public_key = open("./testbed.pub", "r")
 
-cluster_keypair = compute.Keypair(
-    "cluster", name="cluster", public_key=public_key.read()
-)
+with open("../testbed.pub", "r") as pk:
+    cluster_keypair = compute.Keypair("cluster", name="cluster", public_key=pk.read())
 
 secgroup = networking.SecGroup(
     "cluster",
@@ -69,5 +67,3 @@ bastion_fip = compute.FloatingIpAssociate(
     floating_ip="128.214.255.123",
     instance_id=bastion.id,
 )
-
-public_key.close()
