@@ -1,10 +1,13 @@
 """A Python Pulumi program"""
 
-from unicodedata import name
+import pulumi
 from pulumi_openstack import compute, networking
 
 
-with open("../testbed.pub", "r") as pk:
+config = pulumi.Config()
+network_name = config.require("network_name")
+
+with open(config.require("public_key_path"), "r") as pk:
     cluster_keypair = compute.Keypair("cluster", name="cluster", public_key=pk.read())
 
 secgroup = networking.SecGroup(
@@ -22,7 +25,7 @@ secgroup_rule = networking.SecGroupRule(
     security_group_id=secgroup.id,
 )
 
-network = networking.Network("project_2004678")
+network = networking.Network(network_name)
 
 # bastion
 
@@ -55,15 +58,15 @@ bastion_secgroup_egress = networking.SecGroupRule(
 bastion = compute.Instance(
     "bastion",
     name="bastion",
-    image_name="Ubuntu-20.04",
-    flavor_name="standard.small",
+    image_name=config.require("image_name"),
+    flavor_name=config.require("flavor_bastion"),
     key_pair=cluster_keypair.name,
     security_groups=[secgroup, bastion_secgroup],
-    networks=[compute.InstanceNetworkArgs(name="project_2004678")],
+    networks=[compute.InstanceNetworkArgs(name=network_name)],
 )
 
 bastion_fip = compute.FloatingIpAssociate(
     "bastion",
-    floating_ip="128.214.255.123",
+    floating_ip=config.require("floating_ip_bastion"),
     instance_id=bastion.id,
 )

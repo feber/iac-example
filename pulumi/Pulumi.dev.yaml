@@ -1,1 +1,16 @@
 encryptionsalt: v1:AtrvqbBdqPA=:v1:qAg+BuqOekG7BskU:7rj/YjNkyE/vi1xx4KdaqcvRxxoO1g==
+config:
+  IaC:flavor_bastion:
+    secure: v1:gci73booELrRcFRL:Ka+KPNfPuJh1jsJmIBvCjf0762gTYKHVbMur8Dhq
+  IaC:flavor_worker:
+    secure: v1:cJOl+o4wyWuqiR6n:8/UlDydDm9x/qiwKePIjuNZwD8EGj/3DILqehUg4wg==
+  IaC:floating_ip_bastion:
+    secure: v1:XbOBM/vfYyUr9n1Z:B5sr6ka88+ngX33bFH79oBHEpZh50sOUYt6xQjWhoQ==
+  IaC:image_name:
+    secure: v1:1q1OS8gHPk5HW8K1:n09+jFvtQyAOdJOzdWIp9JEjxEkcImizUTn+cA==
+  IaC:network_name:
+    secure: v1:P6afQX4eW4vF9J1E:7RnJqE6RPYPnZAto0YHeOtxsfSmr3VhjYmmu67tHMQ==
+  IaC:public_key_path:
+    secure: v1:DLaJ21oNmyQdokP+:bUELm2zrrFR+rSZk3Bj63O+j0nV+Fot1s+ojj21I
+  IaC:ssh_user:
+    secure: v1:uX0XC7Fv6ygNep2N:tMgjO3W7i6cDEAeF8LCZ/Zk0BRGC7A==
